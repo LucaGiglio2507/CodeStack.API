@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="CodeStack.API/CodeStack.API.csproj" />
+  <Project Path="CodeStack.Core/CodeStack.Core.csproj" />
+  <Project Path="CodeStack.Domain/CodeStack.Domain.csproj" />
+  <Project Path="CodeStack.Infrastructure/CodeStack.Infrastructure.csproj" />
+  <Project Path="CodeStack.Security/CodeStack.Security.csproj" />
+</Solution>
