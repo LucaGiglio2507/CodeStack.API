@@ -17,14 +17,14 @@ public class User
   public bool IsActivated { get; set; }
   public bool CookieAccepted { get; set;  }
 
-  public  ICollection<Kanban> CreatedKanbans { get; set; } = new List<Kanban>();
-  public  ICollection<KanbanMember> KanbanMemberships { get; set; } = new List<KanbanMember>();
-  public  ICollection<Event> Events { get; set; } = new List<Event>();
-  public  ICollection<Synthesis> Syntheses { get; set; } = new List<Synthesis>();
-  public  ICollection<File> Files { get; set; } = new List<File>();
-  public  ICollection<Folder> Folders { get; set; } = new List<Folder>();
-  public  ICollection<Message> SentMessages { get; set; } = new List<Message>();
-  public  ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
-  public  ICollection<Group> Groups { get; set; } = new List<Group>();
-}
+  public ICollection<Kanban> CreatedKanbans { get; set; } = new List<Kanban>();
+  public ICollection<KanbanMember> KanbanMemberships { get; set; } = new List<KanbanMember>();
+  public ICollection<Event> Events { get; set; } = new List<Event>();
+  public ICollection<Synthesis> Syntheses { get; set; } = new List<Synthesis>();
+  public ICollection<File> Files { get; set; } = new List<File>();
+  public ICollection<Folder> Folders { get; set; } = new List<Folder>();
+  public ICollection<Message> SentMessages { get; set; } = new List<Message>();
+  public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
+  public ICollection<Group> Groups { get; set; } = new List<Group>();
+  public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }

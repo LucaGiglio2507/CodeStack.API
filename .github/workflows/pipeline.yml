@@ -1,0 +1,26 @@
+name: Build CodeStack API
+
+on:
+  push:
+    branches: [ main, develop, "feature/**", "features/**"]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore CodeStack.API/CodeStack.API.slnx
+
+      - name: Build
+        run: dotnet build CodeStack.API/CodeStack.API.slnx --no-restore --configuration Release

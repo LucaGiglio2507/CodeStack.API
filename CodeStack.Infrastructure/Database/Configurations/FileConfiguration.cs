@@ -1,12 +1,12 @@
-using CodeStack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DomainFile = CodeStack.Domain.Entities.File;
 
 namespace CodeStack.Infrastructure.Database.Configurations;
 
-public class FileConfiguration : IEntityTypeConfiguration<File>
+public class FileConfiguration : IEntityTypeConfiguration<DomainFile>
 {
-  public void Configure(EntityTypeBuilder<File> builder)
+  public void Configure(EntityTypeBuilder<DomainFile> builder)
   {
     builder.HasKey(f => f.Id);
 

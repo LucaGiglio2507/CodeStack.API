@@ -1,14 +1,10 @@
-﻿using CodeStack.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Task = System.Threading.Tasks.Task;
+using CodeStack.Domain.Entities;
 
 namespace CodeStack.Core.Interfaces.Services.Auth
 {
-    public interface IUserService
+    public interface IAuthService
     {
-        Task UpdatePassword(Guid id, string currentPassword, string newPassword);
-        Task<User?> GetByIdAsync(Guid id);
+        Task<User> LoginAsync(string email, string password);
+        Task<User> RegisterAsync(string email, string firstName, string lastName, string password);
     }
 }

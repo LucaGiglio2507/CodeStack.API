@@ -12,5 +12,5 @@ public class Kanban
   public User Creator { get; set; } = null!;
 
   public ICollection<KanbanMember> Members { get; set; } = new List<KanbanMember>();
-  public ICollection<Task> Tasks { get; set; } = new List<Task>();
+  public ICollection<KanbanColumn> Columns { get; set; } = new List<KanbanColumn>();
 }

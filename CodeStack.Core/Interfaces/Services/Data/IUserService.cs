@@ -10,5 +10,6 @@ namespace CodeStack.Core.Interfaces.Services.Data
     {
         Task UpdatePassword(Guid id, string currentPassword, string newPassword);
         Task<User?> GetByIdAsync(Guid id);
+        Task<User?> UpdateUserAsync(Guid id, string firstName, string lastName, string? avatarUrl, bool cookieAccepted);
     }
 }

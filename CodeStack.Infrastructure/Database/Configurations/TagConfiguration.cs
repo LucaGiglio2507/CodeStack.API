@@ -19,5 +19,10 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
       .IsRequired()
       .HasColumnType("nvarchar")
       .HasMaxLength(7);
+
+    builder.HasOne(t => t.User)
+      .WithMany(u => u.Tags)
+      .HasForeignKey(t => t.User_Id)
+      .OnDelete(DeleteBehavior.Cascade);
   }
 }

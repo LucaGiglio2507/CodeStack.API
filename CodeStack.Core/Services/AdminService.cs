@@ -14,7 +14,7 @@ namespace CodeStack.Core.Services
             if (userId == adminId) return null;
 
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null || !user.IsActive) return null;
+            if (user == null || !user.IsActivated) return null;
 
             user.IsActivated = false;
             user.Last_Login = DateTime.UtcNow;

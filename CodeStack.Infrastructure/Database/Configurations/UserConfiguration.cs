@@ -37,7 +37,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
       .HasMaxLength(100);
 
     builder.Property(u => u.Role)
-      .IsRequired();
+      .IsRequired()
+      .HasDefaultValue(0);
 
     builder.Property(u => u.Avatar_Url)
       .HasColumnType("nvarchar")
@@ -45,6 +46,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
     builder.Property(u => u.Created_At)
       .IsRequired();
+
+    builder.Property(u => u.Last_Login);
+
+    builder.Property(u => u.IsActive)
+      .IsRequired()
+      .HasDefaultValue(false);
+
+    builder.Property(u => u.IsActivated)
+      .IsRequired()
+      .HasDefaultValue(false);
+
+    builder.Property(u => u.CookieAccepted)
+      .IsRequired()
+      .HasDefaultValue(false);
 
   }
 }

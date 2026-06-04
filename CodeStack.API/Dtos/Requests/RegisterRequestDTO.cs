@@ -17,7 +17,8 @@ namespace CodeStack.API.Dtos.Requests
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 50 characters.")]
         public string LastName { get; set; } = null!;
 
-        [Required(ErrorMessage = "Role is required.")]
-        public string Role { get; set; } = null!;
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
+        public string Password { get; set; } = null!;
     }
 }

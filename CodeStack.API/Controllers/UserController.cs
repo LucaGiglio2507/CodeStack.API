@@ -1,4 +1,7 @@
-﻿using CodeStack.Domain.Entities;
+﻿using CodeStack.API.Dtos.Requests;
+using CodeStack.API.Dtos.Responses;
+using CodeStack.Core.Interfaces.Services.Data;
+using CodeStack.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CodeStack.API.Controllers
@@ -16,6 +19,34 @@ namespace CodeStack.API.Controllers
         /// <response code="200">Password updated successfully.</response>
         /// <response code="401">The current password is incorrect.</response>
         /// <response code="404">User not found.</response>
+        /// <summary>
+        /// Updates the user's profile information.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user.</param>
+        /// <param name="dto">The data transfer object containing the updated profile fields.</param>
+        /// <returns>The updated user data.</returns>
+        /// <response code="200">User updated successfully.</response>
+        /// <response code="404">User not found.</response>
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(UserUpdateResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserUpdateRequestDto dto)
+        {
+            try
+            {
+                var updated = await _userService.UpdateUserAsync(id, dto.FirstName, dto.LastName, dto.AvatarUrl, dto.CookieAccepted);
+                if (updated is null)
+                    return NotFound();
+
+                return Ok(UserUpdateResponseDto.FromUser(updated));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An unexpected error occurred : {ex.Message}");
+            }
+        }
+
         [HttpPatch("passwordChange/{id}")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
