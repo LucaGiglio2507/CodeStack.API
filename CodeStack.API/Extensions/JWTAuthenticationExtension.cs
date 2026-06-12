@@ -9,7 +9,7 @@ namespace CodeStack.API.Extensions
         public static void ConfigureJwTAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             // Récupération de la section "JwtSettings" du fichier de configuration
-            var jwtSettings = configuration.GetSection("JwtSettings");
+            IConfigurationSection jwtSettings = configuration.GetSection("JwtSettings");
 
             // Configuration de l'authentification JWT
             services

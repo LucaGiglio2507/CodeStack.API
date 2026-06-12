@@ -7,9 +7,7 @@ public class Task
     public Guid Id { get; set; }
     public required string Title { get; set; }
     public string? Description { get; set; }
-    public string? Branch { get; set; }
     public TaskPriority Priority { get; set; }
-    public DateTime? DueDate { get; set; }
     public bool IsArchived { get; set; }
     public DateTime Created_at { get; set; }
 

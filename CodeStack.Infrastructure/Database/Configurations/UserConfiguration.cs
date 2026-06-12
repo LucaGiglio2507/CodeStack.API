@@ -38,7 +38,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
     builder.Property(u => u.Role)
       .IsRequired()
-      .HasDefaultValue(0);
+      .HasDefaultValue(Roles.User);
 
     builder.Property(u => u.Avatar_Url)
       .HasColumnType("nvarchar")

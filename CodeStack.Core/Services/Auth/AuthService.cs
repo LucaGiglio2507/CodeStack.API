@@ -6,11 +6,14 @@ using CodeStack.Domain.Enums;
 
 namespace CodeStack.Core.Services.Auth;
 
+/// <summary>
+/// Handles user authentication: validates credentials and account status on login, enforces email uniqueness on registration.
+/// </summary>
 public class AuthService(IUserRepository _userRepository, IPasswordHasherService _passwordHasher) : IAuthService
 {
     public async Task<User> LoginAsync(string email, string password)
     {
-        var user = await _userRepository.GetByEmailAsync(email);
+        User? user = await _userRepository.GetByEmailAsync(email);
         if (user is null || !_passwordHasher.VerifyPassword(password, user.Password))
             throw new UnauthorizedAccessException("Invalid credentials.");
 
@@ -23,11 +26,11 @@ public class AuthService(IUserRepository _userRepository, IPasswordHasherService
     public async Task<User> RegisterAsync(string email, string firstName, string lastName,string password)
     {
 
-        var existing = await _userRepository.GetByEmailAsync(email);
+        User? existing = await _userRepository.GetByEmailAsync(email);
         if (existing is not null)
             throw new ArgumentException("An account with this email already exists.");
 
-        var user = new User
+        User user = new User
         {
             Id = Guid.NewGuid(),
             Email = email,

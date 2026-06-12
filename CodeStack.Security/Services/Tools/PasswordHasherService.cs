@@ -7,6 +7,9 @@ using System.Text;
 
 namespace CodeStack.Security.Services.Tools
 {
+    /// <summary>
+    /// Hashes passwords using Argon2id with a random salt, and verifies them using constant-time comparison.
+    /// </summary>
     public class PasswordHasherService : IPasswordHasherService
     {
         private const int SaltSize = 16;
@@ -30,7 +33,7 @@ namespace CodeStack.Security.Services.Tools
 
         private byte[] HashPasswordWithSalt(string password, byte[] salt)
         {
-            using var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
+            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
                 Iterations = Iterations,

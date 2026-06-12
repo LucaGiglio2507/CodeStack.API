@@ -38,7 +38,7 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
     builder.HasOne(f => f.ParentFolder)
       .WithMany(f => f.SubFolders)
       .HasForeignKey(f => f.Parent_Folder_Id)
-      .OnDelete(DeleteBehavior.Cascade);
+      .OnDelete(DeleteBehavior.Restrict);
 
     builder.HasMany(f => f.Tags)
       .WithMany(t => t.Folders)

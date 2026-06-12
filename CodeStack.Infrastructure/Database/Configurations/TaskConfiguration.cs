@@ -20,12 +20,15 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
       .HasColumnType("nvarchar")
       .HasMaxLength(1000);
 
+    builder.Property(t => t.Priority)
+      .IsRequired();
+
     builder.Property(t => t.Created_at)
       .IsRequired();
 
-    builder.HasOne(t => t.Kanban)
+    builder.HasOne(t => t.KanbanColumn)
       .WithMany(k => k.Tasks)
-      .HasForeignKey(t => t.Kanban_Id)
+      .HasForeignKey(t => t.KanbanColumn_Id)
       .OnDelete(DeleteBehavior.Cascade);
 
     builder.HasOne(t => t.AssignedTo)

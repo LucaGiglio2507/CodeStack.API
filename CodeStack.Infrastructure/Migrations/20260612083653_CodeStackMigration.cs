@@ -15,7 +15,9 @@ namespace CodeStack.Infrastructure.Migrations
                 name: "Groups",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,7 +33,7 @@ namespace CodeStack.Infrastructure.Migrations
                     First_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Avatar_Url = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Last_Login = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -87,7 +89,7 @@ namespace CodeStack.Infrastructure.Migrations
                         column: x => x.Parent_Folder_Id,
                         principalTable: "Folders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Folders_Users_User_Id",
                         column: x => x.User_Id,
@@ -151,8 +153,8 @@ namespace CodeStack.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Sender_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Receiver_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Group_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Receiver_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Group_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -252,6 +254,27 @@ namespace CodeStack.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KanbanColumns",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    Kanban_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KanbanColumns", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_KanbanColumns_Kanbans_Kanban_Id",
+                        column: x => x.Kanban_Id,
+                        principalTable: "Kanbans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KanbanMembers",
                 columns: table => new
                 {
@@ -272,35 +295,6 @@ namespace CodeStack.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_KanbanMembers_Users_User_Id",
-                        column: x => x.User_Id,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tasks",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    IsArchived = table.Column<bool>(type: "bit", nullable: false),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Kanban_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    User_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tasks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tasks_Kanbans_Kanban_Id",
-                        column: x => x.Kanban_Id,
-                        principalTable: "Kanbans",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Tasks_Users_User_Id",
                         column: x => x.User_Id,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -329,6 +323,36 @@ namespace CodeStack.Infrastructure.Migrations
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tasks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    IsArchived = table.Column<bool>(type: "bit", nullable: false),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    KanbanColumn_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    User_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tasks_KanbanColumns_KanbanColumn_Id",
+                        column: x => x.KanbanColumn_Id,
+                        principalTable: "KanbanColumns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tasks_Users_User_Id",
+                        column: x => x.User_Id,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -391,6 +415,11 @@ namespace CodeStack.Infrastructure.Migrations
                 column: "ParticipantsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_KanbanColumns_Kanban_Id",
+                table: "KanbanColumns",
+                column: "Kanban_Id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KanbanMembers_Kanban_Id",
                 table: "KanbanMembers",
                 column: "Kanban_Id");
@@ -436,9 +465,9 @@ namespace CodeStack.Infrastructure.Migrations
                 column: "TasksId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_Kanban_Id",
+                name: "IX_Tasks_KanbanColumn_Id",
                 table: "Tasks",
-                column: "Kanban_Id");
+                column: "KanbanColumn_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_User_Id",
@@ -490,6 +519,9 @@ namespace CodeStack.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tasks");
+
+            migrationBuilder.DropTable(
+                name: "KanbanColumns");
 
             migrationBuilder.DropTable(
                 name: "Kanbans");

@@ -32,7 +32,7 @@ public class FileCleanupInterceptor : SaveChangesInterceptor, IFileDeletionTrack
     {
         if (context is null) return;
 
-        var urls = context.ChangeTracker
+        IEnumerable<string> urls = context.ChangeTracker
             .Entries<DomainFile>()
             .Where(e => e.State == EntityState.Deleted)
             .Select(e => e.Entity.Url);

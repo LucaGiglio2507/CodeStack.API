@@ -5,13 +5,13 @@ using CodeStack.Domain.Entities;
 
 namespace CodeStack.Infrastructure.Database.Context;
 
-public class CodeStackDBContext : DbContext
+public class CodeStackDBContext(DbContextOptions<CodeStackDBContext> options) : DbContext(options)
 {
-  public CodeStackDBContext(DbContextOptions<CodeStackDBContext> options) : base(options) { }
 
   public DbSet<User> Users { get; set; } = null!;
   public DbSet<Kanban> Kanbans { get; set; } = null!;
   public DbSet<KanbanMember> KanbanMembers { get; set; } = null!;
+  public DbSet<KanbanColumn> KanbanColumns { get; set; } = null!;
   public DbSet<DomainTask> Tasks { get; set; } = null!;
   public DbSet<Tag> Tags { get; set; } = null!;
   public DbSet<Message> Messages { get; set; } = null!;

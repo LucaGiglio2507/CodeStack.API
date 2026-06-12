@@ -1,13 +1,16 @@
 ﻿using CodeStack.API.Dtos.Requests;
 using CodeStack.API.Dtos.Responses;
 using CodeStack.Core.Interfaces.Services.Data;
-using CodeStack.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using User = CodeStack.Domain.Entities.User;
 
 namespace CodeStack.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    /// <summary>
+    /// Endpoints to update a user's profile fields or change their password.
+    /// </summary>
     public class UserController(IUserService _userService) : ControllerBase
     {
         /// <summary>
@@ -35,7 +38,7 @@ namespace CodeStack.API.Controllers
         {
             try
             {
-                var updated = await _userService.UpdateUserAsync(id, dto.FirstName, dto.LastName, dto.AvatarUrl, dto.CookieAccepted);
+                User? updated = await _userService.UpdateUserAsync(id, dto.FirstName, dto.LastName, dto.AvatarUrl, dto.CookieAccepted);
                 if (updated is null)
                     return NotFound();
 
@@ -48,7 +51,7 @@ namespace CodeStack.API.Controllers
         }
 
         [HttpPatch("passwordChange/{id}")]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -56,7 +59,7 @@ namespace CodeStack.API.Controllers
         {
             try
             {
-                var entity = await _userService.GetByIdAsync(id);
+                User? entity = await _userService.GetByIdAsync(id);
                 if (entity is null)
                 {
                     return NotFound();

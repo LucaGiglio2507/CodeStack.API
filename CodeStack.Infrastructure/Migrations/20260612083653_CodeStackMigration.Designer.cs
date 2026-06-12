@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeStack.Infrastructure.Migrations
 {
     [DbContext(typeof(CodeStackDBContext))]
-    [Migration("20260604075045_CodeStackMigration")]
+    [Migration("20260612083653_CodeStackMigration")]
     partial class CodeStackMigration
     {
         /// <inheritdoc />
@@ -145,6 +145,12 @@ namespace CodeStack.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
@@ -180,6 +186,34 @@ namespace CodeStack.Infrastructure.Migrations
                     b.HasIndex("Creator_Id");
 
                     b.ToTable("Kanbans");
+                });
+
+            modelBuilder.Entity("CodeStack.Domain.Entities.KanbanColumn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<Guid>("Kanban_Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Kanban_Id");
+
+                    b.ToTable("KanbanColumns");
                 });
 
             modelBuilder.Entity("CodeStack.Domain.Entities.KanbanMember", b =>
@@ -222,13 +256,13 @@ namespace CodeStack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("Group_Id")
+                    b.Property<Guid?>("Group_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("Receiver_Id")
+                    b.Property<Guid?>("Receiver_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Sender_Id")
@@ -324,20 +358,23 @@ namespace CodeStack.Infrastructure.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Kanban_Id")
+                    b.Property<Guid>("KanbanColumn_Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar");
 
-                    b.Property<Guid>("User_Id")
+                    b.Property<Guid?>("User_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Kanban_Id");
+                    b.HasIndex("KanbanColumn_Id");
 
                     b.HasIndex("User_Id");
 
@@ -396,7 +433,9 @@ namespace CodeStack.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -485,7 +524,7 @@ namespace CodeStack.Infrastructure.Migrations
                     b.HasOne("CodeStack.Domain.Entities.Folder", "ParentFolder")
                         .WithMany("SubFolders")
                         .HasForeignKey("Parent_Folder_Id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CodeStack.Domain.Entities.User", "User")
                         .WithMany("Folders")
@@ -507,6 +546,17 @@ namespace CodeStack.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("CodeStack.Domain.Entities.KanbanColumn", b =>
+                {
+                    b.HasOne("CodeStack.Domain.Entities.Kanban", "Kanban")
+                        .WithMany("Columns")
+                        .HasForeignKey("Kanban_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kanban");
                 });
 
             modelBuilder.Entity("CodeStack.Domain.Entities.KanbanMember", b =>
@@ -533,14 +583,12 @@ namespace CodeStack.Infrastructure.Migrations
                     b.HasOne("CodeStack.Domain.Entities.Group", "Group")
                         .WithMany("Messages")
                         .HasForeignKey("Group_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CodeStack.Domain.Entities.User", "Receiver")
                         .WithMany("ReceivedMessages")
                         .HasForeignKey("Receiver_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CodeStack.Domain.Entities.User", "Sender")
                         .WithMany("SentMessages")
@@ -579,21 +627,20 @@ namespace CodeStack.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeStack.Domain.Entities.Task", b =>
                 {
-                    b.HasOne("CodeStack.Domain.Entities.Kanban", "Kanban")
+                    b.HasOne("CodeStack.Domain.Entities.KanbanColumn", "KanbanColumn")
                         .WithMany("Tasks")
-                        .HasForeignKey("Kanban_Id")
+                        .HasForeignKey("KanbanColumn_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CodeStack.Domain.Entities.User", "AssignedTo")
                         .WithMany()
                         .HasForeignKey("User_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssignedTo");
 
-                    b.Navigation("Kanban");
+                    b.Navigation("KanbanColumn");
                 });
 
             modelBuilder.Entity("FolderTag", b =>
@@ -655,8 +702,13 @@ namespace CodeStack.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeStack.Domain.Entities.Kanban", b =>
                 {
-                    b.Navigation("Members");
+                    b.Navigation("Columns");
 
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("CodeStack.Domain.Entities.KanbanColumn", b =>
+                {
                     b.Navigation("Tasks");
                 });
 

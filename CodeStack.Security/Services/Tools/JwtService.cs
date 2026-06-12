@@ -8,15 +8,18 @@ using System.Text;
 
 namespace CodeStack.Security.Services.Tools;
 
+/// <summary>
+/// Generates signed JWT tokens (HMAC-SHA256, 8h expiry) from a User entity, embedding sub, email, role and jti claims.
+/// </summary>
 public class JwtService(IConfiguration _configuration) : IJwtService
 {
     public string GenerateToken(User user)
     {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        IConfigurationSection jwtSettings = _configuration.GetSection("JwtSettings");
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
+        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        Claim[] claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
@@ -24,7 +27,7 @@ public class JwtService(IConfiguration _configuration) : IJwtService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
             claims: claims,

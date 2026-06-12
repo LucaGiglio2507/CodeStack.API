@@ -6,13 +6,20 @@ using Task = System.Threading.Tasks.Task;
 
 namespace CodeStack.Infrastructure.Repositories;
 
+/// <summary>
+/// EF Core persistence for User: lookup by email or id, add, full update, and targeted password update.
+/// </summary>
 public class UserRepository(CodeStackDBContext _context) : IUserRepository
 {
     public async Task<User?> GetByEmailAsync(string email)
-        => await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    }
 
     public async Task<User?> GetByIdAsync(Guid id)
-        => await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    }
 
     public async Task<User?> AddAsync(User user)
     {
@@ -29,7 +36,7 @@ public class UserRepository(CodeStackDBContext _context) : IUserRepository
 
     public async Task UpdatePassword(Guid id, string password)
     {
-        var user = await _context.Users.FindAsync(id);
+        User? user = await _context.Users.FindAsync(id);
         if (user is null) return;
         user.Password = password;
         await _context.SaveChangesAsync();
