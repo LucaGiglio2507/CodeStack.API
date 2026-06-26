@@ -10,4 +10,5 @@ public class SynthesisResponseDto
     public bool Archived { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid UserId { get; set; }
+    public Guid? FolderId { get; set; }
 }

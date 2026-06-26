@@ -38,7 +38,7 @@ public class SynthesisController(ISynthesisService _synthesisService) : Controll
     public async Task<IActionResult> Create([FromBody] CreateSynthesisRequestDto dto)
     {
         Synthesis? synthesis = await _synthesisService.CreateAsync(
-            CurrentUserId, dto.Title, dto.Description, dto.Content, dto.IsSnippet);
+            CurrentUserId, dto.Title, dto.Description, dto.Content, dto.IsSnippet, dto.FolderId);
         if (synthesis is null) return StatusCode(500);
         return CreatedAtAction(nameof(GetById), new { id = synthesis.Id }, SynthesisMapper.ToDto(synthesis));
     }
@@ -46,7 +46,7 @@ public class SynthesisController(ISynthesisService _synthesisService) : Controll
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSynthesisRequestDto dto)
     {
-        bool updated = await _synthesisService.UpdateAsync(id, dto.Title, dto.Description, dto.Content);
+        bool updated = await _synthesisService.UpdateAsync(id, dto.Title, dto.Description, dto.Content, dto.FolderId);
         if (!updated) return NotFound();
         return NoContent();
     }

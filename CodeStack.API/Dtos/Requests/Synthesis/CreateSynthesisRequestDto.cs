@@ -14,4 +14,6 @@ public class CreateSynthesisRequestDto
     public string? Content { get; set; }
 
     public bool IsSnippet { get; set; }
+
+    public Guid? FolderId { get; set; }
 }

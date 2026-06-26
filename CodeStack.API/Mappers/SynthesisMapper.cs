@@ -14,7 +14,8 @@ public static class SynthesisMapper
         IsSnippet = synthesis.IsSnippet,
         Archived = synthesis.Archived,
         CreatedAt = synthesis.Created_At,
-        UserId = synthesis.User_Id
+        UserId = synthesis.User_Id,
+        FolderId = synthesis.FolderId
     };
 
     public static IEnumerable<SynthesisResponseDto> ToDtoList(IEnumerable<Synthesis> syntheses)

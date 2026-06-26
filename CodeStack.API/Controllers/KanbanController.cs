@@ -21,7 +21,7 @@ public class KanbanController(IKanbanService _kanbanService, IKanbanColumnServic
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    // board
+    // boards
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -62,7 +62,7 @@ public class KanbanController(IKanbanService _kanbanService, IKanbanColumnServic
         return NoContent();
     }
 
-    // member
+    // members
 
     [HttpPost("{id:guid}/members")]
     public async Task<IActionResult> AddMember(Guid id, [FromBody] AddKanbanMemberRequestDto dto)

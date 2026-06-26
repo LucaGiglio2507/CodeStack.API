@@ -12,8 +12,8 @@ namespace CodeStack.API.Hubs;
 [Authorize]
 public class MessageHub(IMessageService _messageService, IGroupService _groupService) : Hub
 {
-    private Guid CurrentUserId =>
-        Guid.Parse(Context.User!.FindFirstValue(ClaimTypes.NameIdentifier)!);
+private Guid CurrentUserId =>
+Guid.Parse(Context.User!.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     public override async Task OnConnectedAsync()
     {

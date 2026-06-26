@@ -31,6 +31,14 @@ public class SynthesisRepository(CodeStackDBContext _context) : ISynthesisReposi
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Synthesis>> GetByFolderAsync(Guid folderId)
+    {
+        return await _context.Syntheses
+            .Where(s => s.FolderId == folderId)
+            .OrderByDescending(s => s.Created_At)
+            .ToListAsync();
+    }
+
     public async Task<Synthesis?> CreateAsync(Synthesis synthesis)
     {
         _context.Syntheses.Add(synthesis);

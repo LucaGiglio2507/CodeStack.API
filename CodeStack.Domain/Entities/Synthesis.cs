@@ -12,4 +12,7 @@ public class Synthesis
 
   public Guid User_Id { get; set; }
   public User User { get; set; } = null!;
+
+  public Guid? FolderId { get; set; }
+  public Folder? Folder { get; set; }
 }

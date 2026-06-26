@@ -14,7 +14,7 @@ namespace CodeStack.API.Controllers;
 /// <summary>
 /// Authenticated CRUD for the current user's folders, with an extra endpoint to list direct sub-folders.
 /// </summary>
-public class FolderController(IFolderService _folderService) : ControllerBase
+public class FolderController(IFolderService _folderService, ISynthesisService _synthesisService) : ControllerBase
 {
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -39,6 +39,13 @@ public class FolderController(IFolderService _folderService) : ControllerBase
     {
         IEnumerable<Folder> subFolders = await _folderService.GetSubFoldersAsync(id);
         return Ok(FolderMapper.ToDtoList(subFolders));
+    }
+
+    [HttpGet("{id:guid}/contents")]
+    public async Task<IActionResult> GetContents(Guid id)
+    {
+        var syntheses = await _synthesisService.GetByFolderAsync(id);
+        return Ok(SynthesisMapper.ToDtoList(syntheses));
     }
 
     [HttpPost]

@@ -22,7 +22,12 @@ public class SynthesisService(ISynthesisRepository _synthesisRepository) : ISynt
         return await _synthesisRepository.GetByUserAsync(userId);
     }
 
-    public async Task<Synthesis?> CreateAsync(Guid userId, string title, string? description, string? content, bool isSnippet)
+    public async Task<IEnumerable<Synthesis>> GetByFolderAsync(Guid folderId)
+    {
+        return await _synthesisRepository.GetByFolderAsync(folderId);
+    }
+
+    public async Task<Synthesis?> CreateAsync(Guid userId, string title, string? description, string? content, bool isSnippet, Guid? folderId)
     {
         Synthesis synthesis = new Synthesis
         {
@@ -33,12 +38,13 @@ public class SynthesisService(ISynthesisRepository _synthesisRepository) : ISynt
             IsSnippet = isSnippet,
             Archived = false,
             Created_At = DateTime.UtcNow,
-            User_Id = userId
+            User_Id = userId,
+            FolderId = folderId
         };
         return await _synthesisRepository.CreateAsync(synthesis);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, string? title, string? description, string? content)
+    public async Task<bool> UpdateAsync(Guid id, string? title, string? description, string? content, Guid? folderId)
     {
         Synthesis? synthesis = await _synthesisRepository.GetByIdAsync(id);
         if (synthesis is null) return false;
@@ -46,6 +52,7 @@ public class SynthesisService(ISynthesisRepository _synthesisRepository) : ISynt
         if (title is not null) synthesis.Title = title;
         if (description is not null) synthesis.Description = description;
         if (content is not null) synthesis.Content = content;
+        if (folderId is not null) synthesis.FolderId = folderId;
 
         return await _synthesisRepository.UpdateAsync(synthesis);
     }
